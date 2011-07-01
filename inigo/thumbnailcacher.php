@@ -72,16 +72,6 @@ class Inigo_Thumbnailer {
         // create new resized image
         $resized = imagecreatetruecolor($newWidth, $newHeight); // better quality then plain imagecreate
 
-		/*
-    	// Check if this image is PNG or GIF to preserve its transparency 
-    	if(($image_type == IMAGETYPE_GIF) OR ($image_type==IMAGETYPE_PNG)) {
-        	imagealphablending($tmp, false);
-        	imagesavealpha($tmp,true);
-        	$transparent = imagecolorallocatealpha($tmp, 255, 255, 255, 127);
-        	imagefilledrectangle($tmp, 0, 0, $tn_width, $tn_height, $transparent);
-    	}
-		*/
-
         // fill background
         $white = imagecolorallocate($resized, 255, 255, 255);
         imagefill($resized, 0, 0, $white);
