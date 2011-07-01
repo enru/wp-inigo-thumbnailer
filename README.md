@@ -1,7 +1,7 @@
 WordPress (WP) Thumbnailer from Inigo Media Ltd
 ===============================================
 
-This is plugin provides a Template Tag inigo_thumb() that takes a image url hosted within your WP instance and generates a thumbnail for it.
+This is plugin from [Inigo Media Ltd](http://inigo.net/) provides a Template Tag inigo_thumb() that takes a image url hosted within your WP instance and generates a thumbnail for it.
 
 e.g.
 
