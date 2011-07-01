@@ -57,27 +57,27 @@ class Inigo_Thumbnailer {
 
 		list($width, $height, $image_type) = getimagesize($original);
 
-        $proportionalWidth = $newWidth;
-        $proportionalHeight = $newHeight;
+		$proportionalWidth = $newWidth;
+		$proportionalHeight = $newHeight;
 		if($width / $height >= $newWidth / $newHeight) {
-        	$proportionalHeight = round(($newWidth / $width) * $height);
+				$proportionalHeight = round(($newWidth / $width) * $height);
 		}
 		else {
-        	$proportionalWidth = round(($newHeight / $height) * $width);
+				$proportionalWidth = round(($newHeight / $height) * $width);
 		}
 
-        $x = round(($newWidth - $proportionalWidth)/2);
-        $y = round(($newHeight - $proportionalHeight)/2);
+		$x = round(($newWidth - $proportionalWidth)/2);
+		$y = round(($newHeight - $proportionalHeight)/2);
         
-        // create new resized image
+		// create new resized image
         $resized = imagecreatetruecolor($newWidth, $newHeight); // better quality then plain imagecreate
 
-        // fill background
-        $white = imagecolorallocate($resized, 255, 255, 255);
-        imagefill($resized, 0, 0, $white);
+		// fill background
+		$white = imagecolorallocate($resized, 255, 255, 255);
+		imagefill($resized, 0, 0, $white);
 
-        // create source image
-    	switch ($image_type) {
+		// create source image
+		switch ($image_type) {
         	case IMAGETYPE_GIF: 
 				$source = imagecreatefromgif($original); 
 				break;
@@ -88,21 +88,21 @@ class Inigo_Thumbnailer {
 				$source = imagecreatefrompng($original); 
 				break;
         	default: return; break;
-    	}
+		}
         
-        // resize
-        if($source) {
-        	$success = imagecopyresampled($resized, $source, $x, $y, 0, 0,$proportionalWidth, $proportionalHeight, $width, $height);
-        }
+		// resize
+		if($source) {
+				$success = imagecopyresampled($resized, $source, $x, $y, 0, 0,$proportionalWidth, $proportionalHeight, $width, $height);
+		}
         
-        if(is_file($thumb)) { unlink($thumb); }
+		if(is_file($thumb)) { unlink($thumb); }
 
-    	switch ($image_type) {
+		switch ($image_type) {
         	case IMAGETYPE_GIF: imagegif($resized, $thumb); break;
         	case IMAGETYPE_JPEG: imagejpeg($resized, $thumb, 100);  break; // best quality
         	case IMAGETYPE_PNG: imagepng($resized, $thumb, 0); break; // no compression
         	default: break;
-    	}
+		}
 	}
 
 }
