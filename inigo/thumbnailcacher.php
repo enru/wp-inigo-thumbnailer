@@ -70,7 +70,8 @@ class Inigo_Thumbnailer {
         $y = round(($newHeight - $proportionalHeight)/2);
         
         // create new resized image
-        $resized = imagecreatetruecolor($newWidth, $newHeight); // better quality then plain imagecreate
+        // imagecreatetruecolor gives better quality then plain imagecreate
+        $resized = imagecreatetruecolor($newWidth, $newHeight); 
 
         // fill background
         $white = imagecolorallocate($resized, 255, 255, 255);
@@ -92,7 +93,10 @@ class Inigo_Thumbnailer {
         
         // resize
         if($source) {
-           $success = imagecopyresampled($resized, $source, $x, $y, 0, 0,$proportionalWidth, $proportionalHeight, $width, $height);
+            $success = imagecopyresampled(
+                $resized, $source, 
+                $x, $y, 0, 0,
+                $proportionalWidth, $proportionalHeight, $width, $height);
         }
         
         if(is_file($thumb)) { unlink($thumb); }
