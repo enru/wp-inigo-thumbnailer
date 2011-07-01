@@ -1,14 +1,13 @@
 <?php
 /*
-Plugin Name: Thumbnail Create & Cache Plugin
-Plugin URI: http://inigo.net
-Description: creates thumbnails & caches them 
-Version: 0.1
-Author: Neill Russell
-Author URI: http://enru.co.uk
-License: GPL2 
+	Plugin Name: Thumbnail Create & Cache Plugin
+	Plugin URI: http://inigo.net
+	Description: creates thumbnails & caches them 
+	Version: 0.1
+	Author: Neill Russell
+	Author URI: http://enru.co.uk
+	License: GPL2 
 */
-
 /*  Copyright 2011 Neill Russell & Inigo Media Ltd (email: neill@inigo.net)
 
     This program is free software; you can redistribute it and/or modify
