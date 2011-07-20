@@ -23,6 +23,15 @@
     Author URI: http://enru.co.uk
     License: GPL2 
 */
+/*
+    example usage: 
+
+    <a href="/link/to/a/post"><img src="<?php echo inigo_thumb($image['guid'], 168, null, 'centre', true); ?>" alt="auto-generated thumbnail" /></a>
+*/
+/*
+    @todo: corner positions
+    @todo: background colour
+*/
 
 class Inigo_Thumbnailer {
     var $cache = null;
@@ -32,12 +41,18 @@ class Inigo_Thumbnailer {
             mkdir($this->cache, 0755, true);
         }
     }
-    function cached($original) {
+    function cached($original, $width=168, $height=null, $position=null, $regenerate=false) {
         $original_path = $this->path($original);
+        if(is_null($height))  $height = $width;
+        $this->width= $width;
+        $this->height = $height;
+        if(!in_array($position, array('left', 'centre', 'right', 'top', 'bottom'))) $position = 'centre';
+        $this->position = $position;
+        $this->regenerate = $regenerate;
         if(!file_exists($original_path)) return $original; 
         $thumb = $this->thumb($original_path);
-        if(!file_exists($thumb)) {
-            $this->create($thumb, $original_path, 168, 168);
+        if($this->regenerate || !file_exists($thumb)) {
+            $this->create($thumb, $original_path);
         }
         $parts = explode('/wp-content', $thumb);
         $uri = content_url() . $parts[1];
@@ -51,27 +66,34 @@ class Inigo_Thumbnailer {
     function thumb($original) {
         return $this->cache . '/' . basename($original);
     }
-    function create($thumb, $original, $newWidth, $newHeight) {
+    function create($thumb, $original) {
         
         // calculate new proportional sizes
 
         list($width, $height, $image_type) = getimagesize($original);
 
-        $proportionalWidth = $newWidth;
-        $proportionalHeight = $newHeight;
-        if($width / $height >= $newWidth / $newHeight) {
-            $proportionalHeight = round(($newWidth / $width) * $height);
+        $proportionalWidth = $this->width;
+        $proportionalHeight = $this->height;
+        if($width / $height >= $this->width / $this->height) {
+            $proportionalHeight = round(($this->width / $width) * $height);
         }
         else {
-           $proportionalWidth = round(($newHeight / $height) * $width);
+           $proportionalWidth = round(($this->height / $height) * $width);
         }
 
-        $x = round(($newWidth - $proportionalWidth)/2);
-        $y = round(($newHeight - $proportionalHeight)/2);
+        $x = round(($this->width - $proportionalWidth)/2);
+        $y = round(($this->height - $proportionalHeight)/2);
+        switch($this->position) {
+            case 'left': $x = 0; break;
+            case 'right': $x = ($this->width - $proportionalWidth); break;
+            case 'top': $y = 0; break;
+            case 'bottom': $y = ($this->height - $proportionalHeight); break;
+            default: break;
+        }
         
         // create new resized image
         // imagecreatetruecolor gives better quality then plain imagecreate
-        $resized = imagecreatetruecolor($newWidth, $newHeight); 
+        $resized = imagecreatetruecolor($this->width, $this->height); 
 
         // fill background
         $white = imagecolorallocate($resized, 255, 255, 255);
@@ -111,8 +133,8 @@ class Inigo_Thumbnailer {
 
 }
 
-function inigo_thumb($img_path) {
+function inigo_thumb($img_path, $width=168, $height=null, $position='centre', $regenerate=false) {
     $t = new Inigo_Thumbnailer($cache='images/thumbnails');
-    return $t->cached($img_path);
+    return $t->cached($img_path, $width, $height, $position, $regenerate);
 }
 
