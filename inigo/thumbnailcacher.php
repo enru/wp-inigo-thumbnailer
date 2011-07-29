@@ -28,10 +28,6 @@
 
     <a href="/link/to/a/post"><img src="<?php echo inigo_thumb($image['guid'], 168, null, 'centre', true); ?>" alt="auto-generated thumbnail" /></a>
 */
-/*
-    @todo: corner positions
-    @todo: background colour
-*/
 
 class Inigo_Thumbnailer {
     var $cache = null;
@@ -41,14 +37,15 @@ class Inigo_Thumbnailer {
             mkdir($this->cache, 0755, true);
         }
     }
-    function cached($original, $width=168, $height=null, $position=null, $regenerate=false) {
+    function cached($original, $width=168, $height=null, $position=null, $regenerate=false, $bg=array(255,255,255)) {
         $original_path = $this->path($original);
         if(is_null($height))  $height = $width;
         $this->width= $width;
         $this->height = $height;
-        if(!in_array($position, array('left', 'centre', 'right', 'top', 'bottom'))) $position = 'centre';
+        if(!in_array($position, array('left', 'centre', 'right', 'top', 'bottom', 'tc', 'tl','tr', 'bl','br'))) $position = 'centre';
         $this->position = $position;
         $this->regenerate = $regenerate;
+        $this->bg = $bg;
         if(!file_exists($original_path)) return $original; 
         $thumb = $this->thumb($original_path);
         if($this->regenerate || !file_exists($thumb)) {
@@ -88,6 +85,23 @@ class Inigo_Thumbnailer {
             case 'right': $x = ($this->width - $proportionalWidth); break;
             case 'top': $y = 0; break;
             case 'bottom': $y = ($this->height - $proportionalHeight); break;
+            case 'tc': $y = 0; break;
+            case 'tl': 
+                $x = 0;
+                $y = 0; 
+                break;
+            case 'tr': 
+                $x = ($this->width - $proportionalWidth); 
+                $y = 0; 
+                break;
+            case 'bl': 
+                $x = 0; 
+                $y = ($this->height - $proportionalHeight); 
+                break;
+            case 'br': 
+                $x = ($this->width - $proportionalWidth); 
+                $y = ($this->height - $proportionalHeight); 
+                break;
             default: break;
         }
         
@@ -96,8 +110,8 @@ class Inigo_Thumbnailer {
         $resized = imagecreatetruecolor($this->width, $this->height); 
 
         // fill background
-        $white = imagecolorallocate($resized, 255, 255, 255);
-        imagefill($resized, 0, 0, $white);
+        $bgcolor = imagecolorallocate($resized, $this->bg[0], $this->bg[1], $this->bg[2]);
+        imagefill($resized, 0, 0, $bgcolor);
 
         // create source image
         switch ($image_type) {
@@ -133,8 +147,8 @@ class Inigo_Thumbnailer {
 
 }
 
-function inigo_thumb($img_path, $width=168, $height=null, $position='centre', $regenerate=false) {
+function inigo_thumb($img_path, $width=168, $height=null, $position='centre', $regenerate=false, $bg=array(255,255,255)) {
     $t = new Inigo_Thumbnailer($cache='images/thumbnails');
-    return $t->cached($img_path, $width, $height, $position, $regenerate);
+    return $t->cached($img_path, $width, $height, $position, $regenerate, $bg);
 }
 
